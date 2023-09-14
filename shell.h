@@ -160,17 +160,17 @@ void *_realloc(void *, unsigned int, unsigned int);
 /* toem_memory.c */
 int bfree(void **);
 
-/* toem_atoi.c */
+/* prototype of _atoi.c */
 int interactive(info_t *);
 int is_delim(char, char *);
 int _isalpha(int);
 int _atoi(char *);
 
-/* toem_errors1.c */
-int _erratoi(char *);
-void print_error(info_t *, char *);
-int print_d(int, int);
-char *convert_number(long int, int, int);
+/* prototype of cstring.c */
+int convert_string_to_integer(char *);
+void print_custom_error(info_t *, char *);
+int print_custom_integer(int, int);
+char *convert_number_to_string(long int, int, int);
 void remove_comments(char *);
 
 /* toem_builtin.c */
