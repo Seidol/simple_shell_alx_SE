@@ -44,8 +44,8 @@ ssize_t getCommandChain(info_t *shell_info, char **buffer, size_t *length)
 
             /** Update shell information */
             shell_info->linecount_flag = 1;
-            removeComments(*buffer);
-            buildHistoryList(shell_info, *buffer, shell_info->histcount++);
+            remove_Comments(*buffer);
+            build_History_List(shell_info, *buffer, shell_info->histcount++);
 
             /** Update length and command buffer in shell_info */
             *length = bytesRead;
@@ -87,12 +87,12 @@ ssize_t processInput(info_t *shell_info)
         p = buffer + i;
 
         /** Check for chained commands and update 'j' accordingly */
-        checkCommandChain(shell_info, buffer, &j, i, length);
+        getCommandChain(shell_info, buffer, &j, i, length);
 
         /** Iterate to find the end of the command or the next chained command */
         for (; j < length; j++)
         {
-            if (isCommandChain(shell_info, buffer, &j))
+            if (getCommandChain(shell_info, buffer, &j))
                 break;
         }
 
@@ -176,7 +176,7 @@ int customGetLine(info_t *shell_info, char **ptr, size_t *length)
         return (-1);
 
     /** Find the position of newline character in the buffer */
-    c = _strchr(buf + i, '\n');
+    c = strchr(buf + i, '\n');
     k = c ? 1 + (unsigned int)(c - buf) : len;
 
     /** Reallocate memory for the buffer */
@@ -188,9 +188,9 @@ int customGetLine(info_t *shell_info, char **ptr, size_t *length)
 
     /** Concatenate the new data to the buffer */
     if (bytesRead)
-        _strncat(new_p, buf + i, k - i);
+        _strcat(new_p, buf + i, k - i);
     else
-        _strncpy(new_p, buf + i, k - i + 1);
+        _strcpy(new_p, buf + i, k - i + 1);
 
     bytesRead += k - i;
     i = k;

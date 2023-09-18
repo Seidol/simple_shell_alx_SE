@@ -183,9 +183,11 @@ int _myhistory(info_t *);
 int _myalias(info_t *);
 
 /*toem_getline.c */
-ssize_t get_input(info_t *);
-int _getline(info_t *, char **, size_t *);
-void sigintHandler(int);
+ssize_t getCommandChain(info_t *, char **, size_t *);
+ssize_t processInput(info_t *);
+ssize_t readBuffer(info_t *, char *, size_t *);
+int customGetLine(info_t *, char **, size_t *);
+void handleSIGINT(__attribute__((unused))int sig_num);
 
 /* toem_getinfo.c */
 void clear_info(info_t *);
