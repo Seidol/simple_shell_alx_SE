@@ -117,10 +117,10 @@ int find_builtin(info_t *);
 void find_cmd(info_t *);
 void fork_cmd(info_t *);
 
-/* toem_parser.c */
-int is_cmd(info_t *, char *);
-char *dup_chars(char *, int, int);
-char *find_path(info_t *, char *, char *);
+/* prototype for command_executable.c */
+int is_executable(info_t *, char *);
+char *extract_chars(char *, int, int);
+char *find_command_path(info_t *, char *, char *);
 
 /* loophsh.c */
 int loophsh(char **);
@@ -135,10 +135,12 @@ int custom_putsfd(char *custom_str, int fd);
 int _strlen(char *);
 int _strcmp(char *, char *);
 char *starts_with(const char *, const char *);
-char *_strcat(char *, char *);
+char *_strcat(char *, char *, size_t);
+//char *_strcpy(char *dest, const char *src);
+//char *_strcat(char *dest, const char *src);
 
 /* toem_string1.c */
-char *_strcpy(char *, char *);
+char *_strcpy(char *, char *, size_t);
 char *_strdup(const char *);
 void _puts(char *);
 int _putchar(char);
@@ -175,6 +177,7 @@ void remove_comments(char *);
 
 /* toem_builtin.c */
 int _myexit(info_t *);
+void print_error(info_t *info, const char *message);
 int _mycd(info_t *);
 int _myhelp(info_t *);
 
@@ -207,24 +210,24 @@ int _unsetenv(info_t *, char *);
 int _setenv(info_t *, char *, char *);
 
 /* toem_history.c */
-char *get_history_file(info_t *info);
-int write_history(info_t *info);
+char *get_history_filepath(info_t *info);
+int write_history_to_file(info_t *info);
 int read_history(info_t *info);
-int build_history_list(info_t *info, char *buf, int linecount);
+int add_history_entry(info_t *info, char *entry, int linecount);
 int renumber_history(info_t *info);
 
-/* toem_lists.c */
+/* prototype for list.c */
 list_t *add_node(list_t **, const char *, int);
 list_t *add_node_end(list_t **, const char *, int);
 size_t print_list_str(const list_t *);
 int delete_node_at_index(list_t **, unsigned int);
 void free_list(list_t **);
 
-/* toem_lists1.c */
-size_t list_len(const list_t *);
+/* prototype for list_len.c */
+size_t list_length(const list_t *);
 char **list_to_strings(list_t *);
 size_t print_list(const list_t *);
-list_t *node_starts_with(list_t *, char *, char);
+list_t *find_node_with_prefix(list_t *, char *, char);
 ssize_t get_node_index(list_t *, list_t *);
 
 /* toem_vars.c */
