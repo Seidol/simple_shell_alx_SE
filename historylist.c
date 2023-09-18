@@ -25,7 +25,7 @@ int removeAlias(info_t *info, char *alias)
 	char *equalSign, originalChar;
 	int result;
 
-	equalSign = _strchr(alias, '=');
+	equalSign = strchr(alias, '=');
 	if (!equalSign)
 		return (1);
 
@@ -50,7 +50,7 @@ int addAlias(info_t *info, char *alias)
 {
 	char *equalSign, *value;
 
-	equalSign = _strchr(alias, '=');
+	equalSign = strchr(alias, '=');
 	if (!equalSign || !*(equalSign + 1))
 		return (1);
 
@@ -73,7 +73,7 @@ int printAlias(list_t *node)
 
 	if (node)
 	{
-		equalSign = _strchr(node->str, '=');
+		equalSign = strchr(node->str, '=');
 		if (!equalSign)
 			return (1);
 
@@ -118,7 +118,7 @@ int aliasCommand(info_t *info)
 
 	for (i = 1; info->argv[i]; i++)
 	{
-		equalSign = _strchr(info->argv[i], '=');
+		equalSign = strchr(info->argv[i], '=');
 
 		if (equalSign)
 			addAlias(info, info->argv[i]);

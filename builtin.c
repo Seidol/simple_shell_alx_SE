@@ -12,14 +12,14 @@ int shellExit(info_t *info)
 
 	if (info->argv[1] != NULL)
 	{
-		exitStatus = _erratoi(info->argv[1]);
+		exitStatus = _atoi(info->argv[1]);
 
 		if (exitStatus == -1)
 		{
 			info->status = 2;
 			print_error(info, "Illegal number: ");
-			_eputs(info->argv[1]);
-			_eputchar('\n');
+			_puts(info->argv[1]);
+			_putchar('\n');
 			return (1);
 		}
 
@@ -68,8 +68,8 @@ int shellChangeDirectory(info_t *info)
 	if (chdir(dir) == -1)
 	{
 		print_error(info, "can't cd to ");
-		_eputs(info->argv[1]);
-		_eputchar('\n');
+		_puts(info->argv[1]);
+		_putchar('\n');
 	}
 	else
 	{

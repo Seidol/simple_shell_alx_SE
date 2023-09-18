@@ -56,7 +56,7 @@ int setEnvironmentVariable(info_t *info)
 {
 	if (info->argc != 3)
 	{
-		_eputs("Incorrect number of arguments\n");
+		_puts("Incorrect number of arguments\n");
 		return (1);
 	}
 
@@ -80,7 +80,7 @@ int unsetEnvironmentVariable(info_t *info)
 
 	if (info->argc == 1)
 	{
-		_eputs("Too few arguments.\n");
+		_puts("Too few arguments.\n");
 		return (1);
 	}
 

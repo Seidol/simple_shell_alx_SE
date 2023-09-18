@@ -44,8 +44,8 @@ ssize_t getCommandChain(info_t *shell_info, char **buffer, size_t *length)
 
             /** Update shell information */
             shell_info->linecount_flag = 1;
-            remove_Comments(*buffer);
-            build_History_List(shell_info, *buffer, shell_info->histcount++);
+            remove_comments(*buffer);
+            build_history_list(shell_info, *buffer, shell_info->histcount++);
 
             /** Update length and command buffer in shell_info */
             *length = bytesRead;
