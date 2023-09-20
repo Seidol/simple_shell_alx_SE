@@ -1,63 +1,64 @@
 #include "shell.h"
 
 /**
- * is_chain - Checks if the current character in the buffer is chain delimiter
- * @info: The parameter struct containing relevant information.
+ * is_chain - Checks if the current character in
+ * the buffer is a chaining delimiter.
+ * @info: The parameter struct.
  * @buf: The character buffer.
- * @p: The address of the current position in buf.
+ * @p: Address of the current position in buf.
  *
- * Return: 1 if it's a chain delimiter, 0 otherwise.
+ * Return: 1 if it's a chaining delimiter, 0 otherwise.
  */
 
 int is_chain(info_t *info, char *buf, size_t *p)
 {
-	size_t j = *p;
+	size_t h = *p;
 
-	if (buf[j] == '|' && buf[j + 1] == '|')
+	if (buf[h] == '|' && buf[h + 1] == '|')
 	{
-		buf[j] = 0;
-		j++;
+		buf[h] = 0;
+		h++;
 		info->cmd_buf_type = CMD_OR;
 	}
-	else if (buf[j] == '&' && buf[j + 1] == '&')
+	else if (buf[h] == '&' && buf[h + 1] == '&')
 	{
-		buf[j] = 0;
-		j++;
+		buf[h] = 0;
+		h++;
 		info->cmd_buf_type = CMD_AND;
 	}
-	else if (buf[j] == ';') /* found end of this command */
+	else if (buf[h] == ';')
 	{
-		buf[j] = 0; /* replace semicolon with null */
+		buf[h] = 0;
 		info->cmd_buf_type = CMD_CHAIN;
 	}
 	else
 		return (0);
-	*p = j;
+	*p = h;
 	return (1);
 }
 
 /**
- * check_chain - Examines whether we should continue chaining based on
- * the last status.
- * @info: The parameter struct containing relevant information.
+ * check_chain - Determines whether we should
+ * continue chaining based on the last status.
+ * @info: The parameter structcure.
  * @buf: The character buffer.
- * @p: The address of the current position in buf.
- * @i: The starting position in buf.
- * @len: The length of buf.
+ * @p: Address of the current position in buffer.
+ * @i: Starting position in buffer.
+ * @len: Length of buffer.
  *
- * Return: None.
+ * Return: Void
  */
 
 void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 {
-	size_t j = *p;
+	size_t h = *p;
 
 	if (info->cmd_buf_type == CMD_AND)
 	{
 		if (info->status)
 		{
 			buf[i] = 0;
-			j = len;
+			h = len;
 		}
 	}
 	if (info->cmd_buf_type == CMD_OR)
@@ -65,17 +66,19 @@ void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 		if (!info->status)
 		{
 			buf[i] = 0;
-			j = len;
+			h = len;
 		}
 	}
 
-	*p = j;
+	*p = h;
 }
+
 /**
- * replace_alias - Searches for and replaces aliases in the tokenized string.
- * @info: The parameter struct containing the tokenized string.
+ * replace_alias - Substitutes aliases in the tokenized
+ * string with their definitions.
+ * @info: The parameter struct containing alias information.
  *
- * Return: 1 if replacements were made, 0 otherwise.
+ * Return: Returns 1 if any alias is replaced, otherwise returns 0.
  */
 
 int replace_alias(info_t *info)
@@ -86,11 +89,11 @@ int replace_alias(info_t *info)
 
 	for (i = 0; i < 10; i++)
 	{
-		node = find_node_with_prefix(info->alias, info->argv[0], '=');
+		node = node_starts_with(info->alias, info->argv[0], '=');
 		if (!node)
 			return (0);
 		free(info->argv[0]);
-		p = custom_str_find_char(node->str, '=');
+		p = _strchr(node->str, '=');
 		if (!p)
 			return (0);
 		p = _strdup(p + 1);
@@ -102,10 +105,10 @@ int replace_alias(info_t *info)
 }
 
 /**
- * replace_vars - Finds and replaces variables in the tokenized string.
- * @info: The parameter struct containing the tokenized string.
+ * replace_vars - Performs variable substitution in the tokenized string.
+ * @info: The parameter struct containing variable information.
  *
- * Return: 1 if replacements were made, 0 otherwise.
+ * Return: Returns 1 if any variable is replaced, otherwise returns 0.
  */
 
 int replace_vars(info_t *info)
@@ -121,20 +124,20 @@ int replace_vars(info_t *info)
 		if (!_strcmp(info->argv[i], "$?"))
 		{
 			replace_string(&(info->argv[i]),
-			_strdup(convert_number_to_string(info->status, 10, 0)));
+				_strdup(convert_number(info->status, 10, 0)));
 			continue;
 		}
 		if (!_strcmp(info->argv[i], "$$"))
 		{
 			replace_string(&(info->argv[i]),
-			_strdup(convert_number_to_string(getpid(), 10, 0)));
+				_strdup(convert_number(getpid(), 10, 0)));
 			continue;
 		}
-		node = find_node_with_prefix(info->env, &info->argv[i][1], '=');
+		node = node_starts_with(info->env, &info->argv[i][1], '=');
 		if (node)
 		{
 			replace_string(&(info->argv[i]),
-			_strdup(custom_str_find_char(node->str, '=') + 1));
+				_strdup(_strchr(node->str, '=') + 1));
 			continue;
 		}
 		replace_string(&info->argv[i], _strdup(""));
@@ -144,11 +147,11 @@ int replace_vars(info_t *info)
 }
 
 /**
- * replace_string - Replaces a string with a new one.
- * @old: Address of the old string.
- * @new: New string.
+ * replace_string - Replaces occurrences of a string with a new string.
+ * @old: Address of the old string to be replaced.
+ * @new: The new string to replace with.
  *
- * Return: 1 if the replacement was successful, 0 otherwise.
+ * Return: Returns 1 if any replacement occurs, otherwise returns 0.
  */
 
 int replace_string(char **old, char *new)

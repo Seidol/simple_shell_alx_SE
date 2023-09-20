@@ -36,8 +36,8 @@ int _erratoi(char *s)
 
 /**
  * print_error - Displays an error message
- * @info: Pointer to the parameter and return info struct
- * @estr: String containing the specified error type
+ * @i: Pointer to the parameter and return info struct
+ * @error_type: String containing the specified error type
  *
  * This function is responsible for printing out an error message.
  * It takes a pointer to the parameter and return info struct,
@@ -104,9 +104,9 @@ int print_d(int input, int fd)
 
 /**
  * convert_number - Conversion function similar to 'itoa'
- * @num: The number to be converted
- * @base: The base for conversion
- * @flags: Flags for conversion
+ * @nu: The number to be converted
+ * @b: The base for conversion
+ * @f: Flags for conversion
  *
  * This function converts the given number into a string representation
  * based on the specified base. The resulting string is returned.

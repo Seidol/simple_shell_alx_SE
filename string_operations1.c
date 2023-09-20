@@ -1,80 +1,95 @@
 #include "shell.h"
 
 /**
- * _strcpy - Copies a string from source to destination.
- * @dest: Pointer to the destination string.
- * @src: Pointer to the source string.
- * @n: Maximum number of characters to copy.
+ * _strcpy - Copies a string.
+ * @dest: The destination buffer.
+ * @src: The source string.
  *
- * Return: Pointer to the destination string.
+ * This function copies the contents of
+ * the source string 'src' to the destination
+ * buffer 'dest'. It ensures that 'dest' is null-terminated.
+ * It returns a pointer to the destination buffer.
+ *
+ * Return: Pointer to the destination buffer.
  */
-char *_strcpy(char *dest, char *src, size_t n)
+
+char *_strcpy(char *dest, char *src)
 {
-	if (dest == src || src == NULL)
+	int a = 0;
+
+	if (dest == src || src == 0)
 		return (dest);
-
-	for (size_t i = 0; i < n && src[i] != '\0'; i++)
+	while (src[a])
 	{
-		dest[i] = src[i];
+		dest[a] = src[a];
+		a++;
 	}
-	dest[n - 1] = '\0';
-
+	dest[a] = 0;
 	return (dest);
 }
 
 /**
- * _strdup - Duplicates a given string.
- * @str: Pointer to the string to duplicate.
+ * _strdup - Duplicates a string.
+ * @str: The string to be duplicated.
  *
- * Return: Pointer to the duplicated string.
+ * This function create nw copy of the input string str allocates memory for it
+ * and returns a pointer to the duplicated string.
+ *
+ * Return: Pointer to the duplicated string, or NULL if memory allocation fails
  */
+
 char *_strdup(const char *str)
 {
-	int length = 0;
-	char *ret;
+	int len = 0;
+	char *r;
 
 	if (str == NULL)
 		return (NULL);
-
-	while (str[length++])
-		;
-
-	ret = malloc(sizeof(char) * (length));
-	if (!ret)
+	while (*str++)
+		len++;
+	r = malloc(sizeof(char) * (len + 1));
+	if (!r)
 		return (NULL);
-
-	for (int i = 0; i < length; i++)
-	{
-		ret[i] = str[i];
-	}
-
-	return (ret);
+	for (len++; len--;)
+		r[len] = *--str;
+	return (r);
 }
 
 /**
- * _puts - Prints a string to standard output.
- * @str: Pointer to the string to be printed.
+ * _puts - Prints a string to the standard output.
+ * @str: The string to be printed.
+ *
+ * This function outputs the characters of
+ * the input string 'str' to the standard output.
+ * It does not append a newline character.
  *
  * Return: None.
  */
+
 void _puts(char *str)
 {
+	int a = 0;
+
 	if (!str)
 		return;
-
-	for (int i = 0; str[i] != '\0'; i++)
+	while (str[a] != '\0')
 	{
-		_putchar(str[i]);
+		_putchar(str[a]);
+		a++;
 	}
 }
 
 /**
- * _putchar - Writes a character to standard output.
- * @c: The character to print.
+ * _putchar - Writes a character to the standard output.
+ * @c: The character to be printed.
  *
- * Return: On success, returns 1. On error, -1 is returned,
- * and errno is set appropriately.
+ * This function writes the specified character 'c' to the standard output.
+ * It returns 1 on successful execution. If an error occurs, it returns -1 and
+ * sets the 'errno' variable appropriately.
+ *
+ * Return: 1
  */
+
 int _putchar(char c)
 {
 	static int i;
@@ -87,6 +102,5 @@ int _putchar(char c)
 	}
 	if (c != BUF_FLUSH)
 		buf[i++] = c;
-
 	return (1);
 }

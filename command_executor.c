@@ -1,97 +1,97 @@
 #include "shell.h"
 
 /**
- * is_executable - Checks if a file is an executable command.
+ * is_cmd - Checks if a file located at the specified path
+ * is an executable command.
  * @info: Pointer to the info struct.
- * @filepath: The path to the file.
+ * @path: Path to the file.
  *
- * Return: 1 if it's an executable, 0 otherwise.
+ * This function evaluates whether the file at the given path
+ * is an executable command.
+ * Return: 1 if it is an executable command, 0 otherwise.
  */
-int is_executable(info_t *info, char *filepath)
+
+int is_cmd(info_t *info, char *path)
 {
-	struct stat file_stat;
+	struct stat st;
 
 	(void)info;
-
-	if (!filepath || stat(filepath, &file_stat))
+	if (!path || stat(path, &st))
 		return (0);
 
-	if (file_stat.st_mode & S_IFREG)
+	if (st.st_mode & S_IFREG)
+	{
 		return (1);
-
+	}
 	return (0);
 }
 
 /**
- * extract_chars - Extracts characters from a string.
- * @source: The source string.
- * @start: Starting index.
- * @end: Ending index.
+ * dup_chars - Duplicates characters from the PATH string
+ * within the specified range.
+ * @pathstr: The original PATH string.
+ * @start: Starting index of the range.
+ * @stop: Stopping index of the range.
  *
- * Return: A pointer to the newly created buffer.
+ * This function creates a new buffer and copies characters
+ * from the PATH string within the specified range.
+ * Return: Pointer to the new buffer.
  */
-char *extract_chars(char *source, int start, int end)
+
+char *dup_chars(char *pathstr, int start, int stop)
 {
-	static char buffer[1024];
-	int k = 0;
+	static char buf[1024];
+	int a = 0, b = 0;
 
-	do {
-		if (source[start] != ':')
-			buffer[k++] = source[start];
-		start++;
-	} while (start < end);
-
-	buffer[k] = '\0';
-	return (buffer);
+	for (b = 0, a = start; b < stop; a++)
+		if (pathstr[a] != ':')
+			buf[b++] = pathstr[a];
+	buf[k] = 0;
+	return (buf);
 }
 
 /**
- * find_command_path - Finds the full path of a command in the PATH string.
+ * find_path - Searches for the specified command in the PATH string.
  * @info: Pointer to the info struct.
  * @pathstr: The PATH string.
  * @cmd: The command to find.
  *
- * Return: Full path of the command if found, otherwise NULL.
+ * This function looks for the given command within
+ * the directories specified in the PATH string.
+ * Return: The full path of the command if found, or NULL if not found.
  */
-char *find_command_path(info_t *info, char *pathstr, char *cmd)
+
+char *find_path(info_t *info, char *pathstr, char *cmd)
 {
-	int i = 0, curr_pos = 0;
+	int i = 0, cpos = 0;
 	char *path;
 
 	if (!pathstr)
 		return (NULL);
-
 	if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
 	{
-		if (is_executable(info, cmd))
+		if (is_cmd(info, cmd))
 			return (cmd);
 	}
-
-	do {
+	while (1)
+	{
 		if (!pathstr[i] || pathstr[i] == ':')
 		{
-			path = extract_chars(pathstr, curr_pos, i);
-
+			path = dup_chars(pathstr, cpos, i);
 			if (!*path)
-				_strcat(path, cmd, sizeof(path) - strlen(path) - 1);
+				_strcat(path, cmd);
 			else
 			{
-				_strcat(path, "/",
-					sizeof(path) - strlen(path) - 1);
-				_strcat(path, cmd,
-					sizeof(path) - strlen(path) - 1);
+				_strcat(path, "/");
+				_strcat(path, cmd);
 			}
-
-			if (is_executable(info, path))
+			if (is_cmd(info, path))
 				return (path);
-
 			if (!pathstr[i])
 				break;
-
-			curr_pos = i;
+			cpos = i;
 		}
 		i++;
-	} while (1);
-
+	}
 	return (NULL);
 }

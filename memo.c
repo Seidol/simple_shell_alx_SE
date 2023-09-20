@@ -11,16 +11,11 @@
  */
 int bfree(void **ptr)
 {
-	if (ptr)
+	if (ptr && *ptr)
 	{
-		/* Free the memory block */
 		free(*ptr);
-		/* Set the pointer to NULL to avoid a dangling pointer */
 		*ptr = NULL;
-		/* Return 1 to indicate successful memory deallocation */
 		return (1);
 	}
-
-	/* Return 0 to indicate that no memory was freed */
 	return (0);
 }

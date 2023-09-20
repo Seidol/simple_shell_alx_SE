@@ -25,7 +25,7 @@ void _eputs(char *s)
 
 /**
  * _eputchar - Outputs the character 'c' to the standard error stream (stderr)
- * @c: The character to be printed
+ * @b: The character to be printed
  *
  * This function writes the specified character to
  * the standard error output.
@@ -56,7 +56,7 @@ int _eputchar(char b)
  *
  * This function sends the specified character to the specified file descriptor
  *
- * Return: Returns 1 on successful execution. On error, 
+ * Return: Returns 1 on successful execution. On error,
  * it returns -1 and sets 'errno' appropriately.
  */
 

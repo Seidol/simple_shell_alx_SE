@@ -60,7 +60,8 @@ int _mycd(info_t *i)
 			return (1);
 		}
 		_puts(_getenv(i, "OLDPWD=")), _putchar('\n');
-		c= chdir((d = _getenv(i, "OLDPWD=")) ? d : "/");
+
+		c = chdir((d = _getenv(i, "OLDPWD=")) ? d : "/");
 	}
 	else
 		c = chdir(i->argv[1]);

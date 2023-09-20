@@ -22,7 +22,7 @@ size_t list_len(const list_t *head)
 }
 
 /**
- * list_to_strings - Converts a linked list of strings into an array of strings.
+ * list_to_strings - Converts a linked list of strings into an array of strings
  * @head: Pointer to the first node of the list.
  *
  * This function transforms a linked list of strings into a dynamically

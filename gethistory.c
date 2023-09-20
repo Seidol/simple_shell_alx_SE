@@ -110,7 +110,8 @@ int read_history(info_t *info)
 
 /**
  * build_history_list - Adds an entry to a history linked list
- * @info: Pointer to a structure containing potential arguments. This is used to maintain
+ * @info: Pointer to a structure containing
+ * potential arguments. This is used to maintain
  *        a constant function prototype.
  * @buf: The buffer containing the history entry
  * @lt: The history line count (histcount)

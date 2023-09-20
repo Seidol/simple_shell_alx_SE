@@ -34,6 +34,7 @@ char **get_environ(info_t *info)
  * It takes a pointer to the parameter struct and the name of the environment
  * variable to be removed. It returns 1 upon successful deletion,
  * and 0 otherwise.
+ * Return: 0
  */
 
 int _unsetenv(info_t *info, char *var)
@@ -68,6 +69,7 @@ int _unsetenv(info_t *info, char *var)
  * variable or modifying an existing one. It takes a pointer to
  * the parameter struct, the name of the environment variable,
  * and its value. It always returns 0.
+ * Return: 0
  */
 
 int _setenv(info_t *info, char *var, char *value)
