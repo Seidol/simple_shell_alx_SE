@@ -50,6 +50,7 @@ void print_custom_error(info_t *info, char *error_type)
  * print_custom_integer - prints a custom integer to a file descriptor
  * @input: the integer to print
  * @fd: the file descriptor to write to
+ * Return: none
  */
 int print_custom_integer(int input, int fd)
 {

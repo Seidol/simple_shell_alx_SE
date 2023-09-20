@@ -1,7 +1,8 @@
 #include "shell.h"
 
 /**
- * getCommandChain - This function reads a line of input, potentially containing
+ * getCommandChain - This function reads a line of input,
+ * potentially containing
  * chained commands, and stores it in the provided buffer.
  *
  * @shell_info: Parameter struct for shell information
@@ -29,31 +30,28 @@ ssize_t getCommandChain(info_t *shell_info, char **buffer, size_t *length)
 		#if USE_GETLINE
 			bytesRead = getline(buffer, &currentLength, stdin);
 		#else
-			bytesRead = customGetLine(shell_info, buffer, &currentLength);
+			bytesRead = customGetLine(shell_info, buffer,
+			&currentLength);
 		#endif
 
 		/** Process the input if read was successful */
 		if (bytesRead > 0)
-		{
 			/** Remove trailing newline character */
 			if ((*buffer)[bytesRead - 1] == '\n')
-			{
 				(*buffer)[bytesRead - 1] = '\0';
 				bytesRead--;
-			}
-
 			/** Update shell information */
 			shell_info->linecount_flag = 1;
 			remove_comments(*buffer);
-			build_history_list(shell_info, *buffer, shell_info->histcount++);
+			add_history_entry(shell_info, *buffer,
+			shell_info->histcount++);
 
 			/** Update length and command buffer in shell_info */
 			*length = bytesRead;
 			shell_info->cmd_buf = buffer;
-		}
 	}
 
-	return bytesRead;
+	return (bytesRead);
 }
 
 /**
@@ -86,20 +84,12 @@ ssize_t processInput(info_t *shell_info)
 	{
 		j = i;
 		p = buffer + i;
-
-		/** Check for chained commands and update 'j' accordingly */
 		getCommandChain(shell_info, &buffer, &j);
-
-		/** Iterate to find the end of the command or the next chained command */
 		for (; j < length; j++)
-		{
 			if (getCommandChain(shell_info, &buffer, &j))
 				break;
-		}
 
 		i = j + 1;
-
-		/** Reset if end of buffer is reached */
 		if (i >= length)
 		{
 			i = length = 0;
@@ -142,7 +132,7 @@ ssize_t readBuffer(info_t *shell_info, char *buf, size_t *i)
 }
 
 /**
- * customGetLine - This function gets the next line of input from standard input.
+ * customGetLine - This function get the nxt line of input from standard input.
  *
  * @shell_info: Parameter struct for shell information
  * @ptr: Address of pointer to buffer (preallocated or NULL)
@@ -159,47 +149,27 @@ int customGetLine(info_t *shell_info, char **ptr, size_t *length)
 	char *p = NULL, *new_p = NULL, *c;
 
 	p = *ptr;
-
-	/** If there's an existing buffer and length information, update bytesRead */
 	if (p && length)
 		bytesRead = *length;
-
-	/** If 'i' has reached the end of the buffer, reset it */
 	if (i == len)
 		i = len = 0;
-
-	/** Read data into buffer */
 	bytesRead = readBuffer(shell_info, buf, &len);
-
-	/** If end of file or no data available, return -1 (EOF) */
 	if (bytesRead == -1 || (bytesRead == 0 && len == 0))
 		return (-1);
-
-	/** Find the position of newline character in the buffer */
 	c = strchr(buf + i, '\n');
 	k = c ? 1 + (unsigned int)(c - buf) : len;
-
-	/** Reallocate memory for the buffer */
 	new_p = _realloc(p, bytesRead, bytesRead ? bytesRead + k : k + 1);
-
-	/** If memory allocation fails, return -1 */
 	if (!new_p)
 		return (p ? (free(p), -1) : -1);
-
-	/** Concatenate the new data to the buffer */
 	if (bytesRead)
 		_strcat(new_p, buf + i, k - i);
 	else
 		_strcpy(new_p, buf + i, k - i + 1);
-
 	bytesRead += k - i;
 	i = k;
 	p = new_p;
-
-	/** Update length if provided */
 	if (length)
 		*length = bytesRead;
-
 	*ptr = p; /** Update buffer pointer */
 	return (bytesRead); /** Return total bytes read */
 }

@@ -29,6 +29,7 @@ void custom_puts(char *custom_str)
  * If the character is a special value for flushing the buffer or the buffer
  * is full,
  * it flushes the buffer to the standard error output.
+ * Return: return one when it is sucessful
  */
 int custom_putchar(char c)
 {
@@ -54,6 +55,7 @@ int custom_putchar(char c)
  * If the character is a special value for flushing the buffer or the buffer
  * is full,
  * it flushes the buffer to the specified file descriptor.
+ * Return: return one when it sucessful
  */
 int custom_putfd(char c, int fd)
 {
@@ -78,6 +80,7 @@ int custom_putfd(char c, int fd)
  * This function prints the characters of the custom string to the
  * specified file descriptor.
  * If the input string is NULL, it does nothing.
+ * Return: return one it is sucessful
  */
 int custom_putsfd(char *custom_str, int fd)
 {

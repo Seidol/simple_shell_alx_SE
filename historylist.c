@@ -33,7 +33,7 @@ int removeAlias(info_t *info, char *alias)
 	*equalSign = 0;
 
 	result = delete_node_at_index(&(info->alias),
-		get_node_index(info->alias, node_starts_with(info->alias, alias, -1)));
+		get_node_index(info->alias, find_node_with_prefix(info->alias, alias, -1)));
 
 	*equalSign = originalChar;
 	return (result);
@@ -123,7 +123,7 @@ int aliasCommand(info_t *info)
 		if (equalSign)
 			addAlias(info, info->argv[i]);
 		else
-			printAlias(node_starts_with(info->alias, info->argv[i], '='));
+			printAlias(find_node_with_prefix(info->alias, info->argv[i], '='));
 	}
 
 	return (0);

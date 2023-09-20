@@ -5,7 +5,7 @@
  * @info: Pointer to the info struct.
  * @filepath: The path to the file.
  *
- * Returns: 1 if it's an executable, 0 otherwise.
+ * Return: 1 if it's an executable, 0 otherwise.
  */
 int is_executable(info_t *info, char *filepath)
 {
@@ -28,7 +28,7 @@ int is_executable(info_t *info, char *filepath)
  * @start: Starting index.
  * @end: Ending index.
  *
- * Returns: A pointer to the newly created buffer.
+ * Return: A pointer to the newly created buffer.
  */
 char *extract_chars(char *source, int start, int end)
 {
@@ -51,7 +51,7 @@ char *extract_chars(char *source, int start, int end)
  * @pathstr: The PATH string.
  * @cmd: The command to find.
  *
- * Returns: Full path of the command if found, otherwise NULL.
+ * Return: Full path of the command if found, otherwise NULL.
  */
 char *find_command_path(info_t *info, char *pathstr, char *cmd)
 {
