@@ -1,38 +1,47 @@
 #include "shell.h"
-
 /**
- * main - The main entry point of the shell program.
- * @count: The ergument count
- * @vector: The argument vector
+ * main - Entry point of the program.
+ * @ac: Argument count.
+ * @av: Argument vector.
  *
- * Return: 0 on success, 1 on error
+ * This is the main function where the program execution begins.
+ * It takes the argument count (ac) and argument vector (av) as parameters.
+ * Return: 0 on successful execution, 1 on error.
  */
-int main(int count, char **vector)
+
+
+int main(int ac, char **av)
 {
 	info_t info[] = { INFO_INIT };
-	int error_fd = STDERR_FILENO, fd;
+	int fd = 2;
 
 	asm ("mov %1, %0\n\t"
 		"add $3, %0"
-		: "=r" (error_fd)
-		: "r" (error_fd));
-	if (count == 2)
-		fd = open(vector[1], O_RDONLY);
+		: "=r" (fd)
+		: "r" (fd));
 
+	if (ac == 2)
+	{
+		fd = open(av[1], O_RDONLY);
 		if (fd == -1)
+		{
 			if (errno == EACCES)
 				exit(126);
 			if (errno == ENOENT)
-				_puts(vector[0]);
-				_puts(": 0: Can't open ");
-				_puts(vector[1]);
-				_putchar('\n');
-				_putchar(BUF_FLUSH);
+			{
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
 				exit(127);
+			}
 			return (EXIT_FAILURE);
+		}
 		info->readfd = fd;
+	}
 	populate_env_list(info);
 	read_history(info);
-	hsh(info, vector);
+	hsh(info, av);
 	return (EXIT_SUCCESS);
 }
