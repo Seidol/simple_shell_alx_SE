@@ -1,144 +1,166 @@
 #include "shell.h"
 
 /**
- * convert_string_to_integer - converts a string to an integer
- * @str: the string to be converted
+ * _erratoi - Converts a string to an integer
+ * @s: The string to be converted
  *
- * Return: The converted integer, or -1 if conversion fails
+ * This function attempts to convert the provided string
+ * to an integer. If the string contains no numbers, it returns 0.
+ * If an error occurs during the conversion process, it returns -1.
+ *
+ * Return: The converted integer if successful,
+ * 0 if no numbers are found in the string, or -1 on error.
  */
-int convert_string_to_integer(char *str)
+
+int _erratoi(char *s)
 {
-	int i = 0;
+	int a = 0;
 	unsigned long int r = 0;
 
-	if (*str == '+')
-		str++;
-
-	while (str[i] != '\0')
+	if (*s == '+')
+		s++;
+	for (a = 0;  s[a] != '\0'; a++)
 	{
-		if (str[i] >= '0' && str[i] <= '9')
+		if (s[a] >= '0' && s[a] <= '9')
 		{
 			r *= 10;
-			r += (str[i] - '0');
+			r += (s[a] - '0');
 			if (r > INT_MAX)
 				return (-1);
 		}
 		else
 			return (-1);
-		i++;
 	}
 	return (r);
 }
 
 /**
- * print_custom_error - prints a custom error message
- * @info: information about the command
- * @error_type: string containing the specified error type
+ * print_error - Displays an error message
+ * @info: Pointer to the parameter and return info struct
+ * @estr: String containing the specified error type
+ *
+ * This function is responsible for printing out an error message.
+ * It takes a pointer to the parameter and return info struct,
+ * as well as a string indicating the type of error.
+ *
+ * Return: Returns 0 if no numbers are found in the string,
+ * otherwise returns -1 on error.
  */
-void print_custom_error(info_t *info, char *error_type)
+
+void print_error(info_t *i, char *error_type)
 {
-	custom_puts(info->fname);
-	custom_puts(": ");
-	print_custom_integer(info->line_count, STDERR_FILENO);
-	custom_puts(": ");
-	custom_puts(info->argv[0]);
-	custom_puts(": ");
-	custom_puts(error_type);
+	_eputs(i->fname);
+	_eputs(": ");
+	print_d(i->line_count, STDERR_FILENO);
+	_eputs(": ");
+	_eputs(i->argv[0]);
+	_eputs(": ");
+	_eputs(error_type);
 }
 
 /**
- * print_custom_integer - prints a custom integer to a file descriptor
- * @input: the integer to print
- * @fd: the file descriptor to write to
- * Return: none
+ * print_d - This function prints a decimal (base 10) integer.
+ * @input: The integer to be printed.
+ * @fd: The file descriptor to write to.
+ *
+ * This function takes an integer input and writes it
+ * to the specified file descriptor in decimal format (base 10).
+ * It returns the number of characters printed.
+ *
+ * Return: The number of characters printed.
  */
-int print_custom_integer(int input, int fd)
+
+int print_d(int input, int fd)
 {
-	int (*put_char)(char) = custom_putchar;
-	int count = 0;
+	int (*__putchar)(char) = _putchar;
+	int i, c = 0;
 	unsigned int absolute, current;
 
 	if (fd == STDERR_FILENO)
-		put_char = custom_putchar;
-
+		__putchar = _eputchar;
 	if (input < 0)
 	{
 		absolute = -input;
-		put_char('-');
-		count++;
+		__putchar('-');
+		c++;
 	}
 	else
 		absolute = input;
 	current = absolute;
-
-	int divisor = 1000000000;
-
-	while (divisor > 1)
+	for (i = 1000000000; i > 1; i /= 10)
 	{
-		if (absolute / divisor)
+		if (absolute / i)
 		{
-			put_char('0' + current / divisor);
-			count++;
+			__putchar('0' + current / i);
+			c++;
 		}
-		current %= divisor;
-		divisor /= 10;
+		current %= i;
 	}
+	__putchar('0' + current);
+	c++;
 
-	put_char('0' + current);
-	count++;
+	return (c);
 }
 
 /**
- * convert_number_to_string - converts a number to a string
- * @num: number to convert
- * @base: base for conversion
- * @flags: flags for conversion
+ * convert_number - Conversion function similar to 'itoa'
+ * @num: The number to be converted
+ * @base: The base for conversion
+ * @flags: Flags for conversion
  *
- * Return: The converted string
+ * This function converts the given number into a string representation
+ * based on the specified base. The resulting string is returned.
+ *
+ * Return: A string representing the converted number.
  */
-char *convert_number_to_string(long int num, int base, int flags)
+
+char *convert_number(long int nu, int b, int f)
 {
-	static char *array;
+	static char *arr;
 	static char buffer[50];
-	char sign = 0;
+	char sn = 0;
 	char *ptr;
-	unsigned long n = num;
+	unsigned long n = nu;
 
-	if (!(flags & CONVERT_UNSIGNED) && num < 0)
+	if (!(f & CONVERT_UNSIGNED) && n < 0)
 	{
-		n = -num;
-		sign = '-';
-	}
+		n = -nu;
+		sn = '-';
 
-	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
+	}
+	arr = f & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
 	ptr = &buffer[49];
 	*ptr = '\0';
 
-	do {
-		*--ptr = array[n % base];
-		n /= base;
+	do	{
+		*--ptr = arr[n % b];
+		n /= b;
 	} while (n != 0);
 
-	if (sign)
-		*--ptr = sign;
+	if (sn)
+		*--ptr = sn;
 	return (ptr);
 }
 
 /**
- * remove_comments - replaces first instance of '#' with '\0'
- * @buffer: address of the string to modify
+ * remove_comments - Replaces the first instance of '#' with '\0'
+ * @buf: The address of the string to modify
+ *
+ * This function is responsible for locating the first occurrence
+ * of '#' in the string and replacing it with the null character
+ * '\0'. It operates on the string at the provided address.
+ *
+ * Return: Always returns 0.
  */
-void remove_comments(char *buffer)
-{
-	int i = 0;
 
-	while (buffer[i] != '\0')
-	{
-		if (buffer[i] == '#' && (!i || buffer[i - 1] == ' '))
+void remove_comments(char *buf)
+{
+	int a;
+
+	for (a = 0; buf[a] != '\0'; a++)
+		if (buf[a] == '#' && (!a || buf[a - 1] == ' '))
 		{
-			buffer[i] = '\0';
+			buf[a] = '\0';
 			break;
 		}
-		i++;
-	}
 }

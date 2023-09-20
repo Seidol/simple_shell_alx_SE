@@ -1,95 +1,95 @@
 #include "shell.h"
 
 /**
- * shellExit - Exits the shell
- * @info: Structure containing potential arguments
+ * _myexit - Exits the shell
+ * @i: Structure containing potential arguments
  *
  * Return: Exits with a given exit status
  */
-int shellExit(info_t *info)
+int _myexit(info_t *i)
 {
-	int exitStatus = 0;
+	int exitcheck;
 
-	if (info->argv[1] != NULL)
+	if (i->argv[1])  /* If there is an exit arguement */
 	{
-		exitStatus = _atoi(info->argv[1]);
-
-		if (exitStatus == -1)
+		exitcheck = _erratoi(i->argv[1]);
+		if (exitcheck == -1)
 		{
-			info->status = 2;
-			print_error(info, "Illegal number: ");
-			_puts(info->argv[1]);
-			_putchar('\n');
+			i->status = 2;
+			print_error(i, "Illegal number: ");
+			_eputs(i->argv[1]);
+			_eputchar('\n');
 			return (1);
 		}
-
-		info->err_num = exitStatus;
+		i->err_num = _erratoi(i->argv[1]);
+		return (-2);
 	}
-
-	info->err_num = -1;
+	i->err_num = -1;
 	return (-2);
 }
 
 /**
- * shellChangeDirectory - Changes the current directory of the process
- * @info: Structure containing potential arguments
+ * _mycd - Changes the current directory of the process
+ * @i: Structure containing potential arguments
  *
  * Return: Always 0
  */
-int shellChangeDirectory(info_t *info)
+int _mycd(info_t *i)
 {
-	char *dir, buffer[1024];
-	char *currentDir = getcwd(buffer, 1024);
+	char *s, *d, buffer[1024];
+	int c;
 
-	if (!currentDir)
+	s = getcwd(buffer, 1024);
+	if (!s)
 		_puts("TODO: >>getcwd failure emsg here<<\n");
-
-	if (info->argv[1] == NULL)
+	if (!i->argv[1])
 	{
-		dir = _getenv(info, "HOME=");
-		if (!dir)
-			dir = (_getenv(info, "PWD=")) ? _getenv(info, "PWD=") : "/";
+		d = _getenv(i, "HOME=");
+		if (!d)
+			c =
+				chdir((d = _getenv(i, "PWD=")) ? d : "/");
+		else
+			c = chdir(d);
 	}
-	else if (_strcmp(info->argv[1], "-") == 0)
+	else if (_strcmp(i->argv[1], "-") == 0)
 	{
-		dir = _getenv(info, "OLDPWD=");
-		if (!dir)
+		if (!_getenv(i, "OLDPWD="))
 		{
-			_puts(currentDir);
+			_puts(s);
 			_putchar('\n');
 			return (1);
 		}
+		_puts(_getenv(i, "OLDPWD=")), _putchar('\n');
+		c= chdir((d = _getenv(i, "OLDPWD=")) ? d : "/");
+	}
+	else
+		c = chdir(i->argv[1]);
+	if (c == -1)
+	{
+		print_error(i, "can not cd to ");
+		_eputs(i->argv[1]), _eputchar('\n');
 	}
 	else
 	{
-		dir = info->argv[1];
+		_setenv(i, "OLDPWD", _getenv(i, "PWD="));
+		_setenv(i, "PWD", getcwd(buffer, 1024));
 	}
-
-	if (chdir(dir) == -1)
-	{
-		print_error(info, "can't cd to ");
-		_puts(info->argv[1]);
-		_putchar('\n');
-	}
-	else
-	{
-		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
-		_setenv(info, "PWD", getcwd(buffer, 1024));
-	}
-
 	return (0);
 }
 
 /**
- * shellHelp - Provides help information for the shell
+ * _myhelp - Provides help information for the shell
  * @info: Structure containing potential arguments
  *
  * Return: Always 0
  */
-int shellHelp(info_t *info)
+int _myhelp(info_t *info)
 {
-	(void)info; /* Unused parameter */
+	char **arg_array;
 
-	_puts("Help call works. Function not yet implemented.\n");
+	arg_array = info->argv;
+	_puts("help call works. Function not yet implemented \n");
+	if (0)
+		_puts(*arg_array);
 	return (0);
 }

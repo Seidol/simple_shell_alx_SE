@@ -1,114 +1,118 @@
 #include "shell.h"
 
 /**
- *	displayEnvironment - Prints the current environment variables.
- *	@info: Structure containing potential arguments and environment data.
+ * _myenv - Displays the current environment variables
+ * @i: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
  *
- *	This function prints the list of environment variables.
+ * This function prints out the current environment variables.
+ * It provides a snapshot of the system's configuration.
  *
- *	Return: Always 0.
+ * Return: Always returns 0 upon successful execution.
  */
-int displayEnvironment(info_t *info)
+
+int _myenv(info_t *i)
 {
-	print_list_str(info->env);
+	print_list_str(i->env);
 	return (0);
 }
 
 /**
- *	getEnvironmentVariable - Retrieves the value of an environment variable.
- *	@info: Structure containing potential arguments and environment data.
- *	@name: Name of the environment variable.
+ * _getenv - Retrieves the value of an environment variable
+ * @i: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
+ * @n: Name of the environment variable to retrieve
  *
- *	This function searches for the specified environment variable and
- *	returns its value.
+ * This function retrieves the value associated with
+ * the specified environment variable.
  *
- *	Return: The value of the environment variable or NULL if not found.
+ * Return: The value of the environment variable, or NULL if not found.
  */
-char *getEnvironmentVariable(info_t *info, const char *name)
+
+char *_getenv(info_t *i, const char *n)
 {
-	list_t *n = info->env;
+	list_t *n = i->env;
 	char *p;
 
 	while (n)
 	{
-		p = starts_with(n->str, name);
+		p = starts_with(n->str, n);
 		if (p && *p)
 			return (p);
-		n = n->next;
+		node = n->next;
 	}
-
 	return (NULL);
 }
 
 /**
- *	setEnvironmentVariable - Initializes or modifies an environment variable.
- *	@info: Structure containing potential arguments and environment data.
+ * _mysetenv - Creates a new environment variable or updates an existing one
+ * @info: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
  *
- *	This function sets or modifies an environment variable with the
- *	specified value.
- *	If the variable already exists, it updates its value; otherwise,
- *	it creates a
- *	new environment variable.
+ * This function allows for the creation of a new environment variable
+ * or the modification of an existing one.
+ * It provides a way to manage the system's configuration.
  *
- *	Return: Always 0.
+ * Return: Always returns 0 upon successful execution.
  */
-int setEnvironmentVariable(info_t *info)
+
+int _mysetenv(info_t *info)
 {
 	if (info->argc != 3)
 	{
-		_puts("Incorrect number of arguments\n");
+		_eputs("Invalid number of arguments\n");
 		return (1);
 	}
-
 	if (_setenv(info, info->argv[1], info->argv[2]))
 		return (0);
-
 	return (1);
 }
 
 /**
- *	unsetEnvironmentVariable - Removes an environment variable.
- *	@info: Structure containing potential arguments and environment data.
+ * _myunsetenv - Deletes an environment variable
+ * @info: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
  *
- *	This function removes the specified environment variable.
+ * This function allows for the removal of a specific
+ * environment variable,effectively deleting it from the system's configuration
  *
- *	Return: Always 0.
+ * Return: Always returns 0 upon successful execution.
  */
-int unsetEnvironmentVariable(info_t *info)
+
+int _myunsetenv(info_t *info)
 {
-	int a = 1;
+	int b;
 
 	if (info->argc == 1)
 	{
-		_puts("Too few arguments.\n");
+		_eputs("Insufficient number of arguments.\n");
 		return (1);
 	}
-
-	while (info->argv[a])
-	{
-		_unsetenv(info, info->argv[a]);
-		a++;
-	}
+	for (b = 1; b <= info->argc; b++)
+		_unsetenv(info, info->argv[b]);
 
 	return (0);
 }
 
 /**
- *	populateEnvironmentList - Populates the environment linked list.
- *	@info: Structure containing potential arguments and environment data.
+ * populate_env_list - Fills a linked list with environment variables
+ * @info: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
  *
- *	This function fills the linked list with the current environment variables.
+ * This function populates a linked list with environment
+ * variables, allowing for easy management and access to the
+ * system's configuration.
  *
- *	Return: Always 0.
+ * Return: Always returns 0 upon successful execution.
  */
-int populateEnvironmentList(info_t *info)
+
+int populate_env_list(info_t *info)
 {
-	list_t *node = NULL;
+	list_t *n = NULL;
 	size_t a;
 
 	for (a = 0; environ[a]; a++)
-		add_node_end(&node, environ[a], 0);
-
-	info->env = node;
+		add_node_end(&n, environ[i], 0);
+	info->env = n;
 	return (0);
 }

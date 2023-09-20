@@ -1,9 +1,14 @@
 #include "shell.h"
 
 /**
- * clear_info - Resets the fields of the info_t struct.
- * @info: Address of the info_t struct to be cleared.
+ * clear_info - Initializes the info_t struct
+ * @info: Address of the struct to be initialized
+ *
+ * This function is responsible for initializing
+ * the info_t struct. It takes the address of the
+ * struct as an argument and performs the necessary initialization steps.
  */
+
 void clear_info(info_t *info)
 {
 	info->arg = NULL;
@@ -13,10 +18,16 @@ void clear_info(info_t *info)
 }
 
 /**
- * set_info - Initializes the info_t struct with provided arguments.
- * @info: Address of the info_t struct.
- * @av: Argument vector containing program arguments.
+ * set_info - Initializes the info_t struct
+ * @info: Address of the struct to be initialized
+ * @av: Argument vector
+ *
+ * This function is responsible for initializing
+ * the info_t struct. It takes the address of the struct
+ * as well as the argument vector (av) and performs
+ * the necessary initialization steps.
  */
+
 void set_info(info_t *info, char **av)
 {
 	int a = 0;
@@ -27,6 +38,7 @@ void set_info(info_t *info, char **av)
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
 		{
+
 			info->argv = malloc(sizeof(char *) * 2);
 			if (info->argv)
 			{
@@ -34,11 +46,8 @@ void set_info(info_t *info, char **av)
 				info->argv[1] = NULL;
 			}
 		}
-		a = 0;
-		while (info->argv && info->argv[a])
-		{
-			a++;
-		}
+		for (a = 0; info->argv && info->argv[a]; a++)
+			;
 		info->argc = a;
 
 		replace_alias(info);
@@ -47,10 +56,15 @@ void set_info(info_t *info, char **av)
 }
 
 /**
- * free_info - Releases memory associated with fields in the info_t struct.
- * @info: Address of the info_t struct.
- * @all: Flag indicating whether to free all fields.
+ * free_info - Releases memory associated with fields in the info_t struct
+ * @info: Address of the struct containing fields to be freed
+ * @all: True if freeing all fields, otherwise only specific fields are freed
+ *
+ * This function is responsible for freeing the memory associated with fields
+ * in the info_t struct. It takes the address of the struct and
+ * a flag indicating whether to free all fields or only specific ones.
  */
+
 void free_info(info_t *info, int all)
 {
 	ffree(info->argv);
@@ -67,7 +81,7 @@ void free_info(info_t *info, int all)
 		if (info->alias)
 			free_list(&(info->alias));
 		ffree(info->environ);
-		info->environ = NULL;
+			info->environ = NULL;
 		bfree((void **)info->cmd_buf);
 		if (info->readfd > 2)
 			close(info->readfd);

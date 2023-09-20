@@ -1,77 +1,92 @@
 #include "shell.h"
 
 /**
- * custom_str_copy - Copies a string.
- * @destination: The destination string to be copied to.
- * @source: The source string.
- * @max_chars: The maximum number of characters to be copied.
+ * _strncpy - Copies a string from source to destination
+ * @destination: The destination string where the copy will be placed
+ * @source: The source string to be copied
+ * @max_chars: The maximum number of characters to copy
  *
- * Return: The pointer to the start of the destination string.
+ * This function performs a string copy operation from
+ * 'src' to 'dest'. It copies up to 'n' characters and
+ * returns the concatenated string.
+ *
+ * Return: Returns the resulting concatenated string.
  */
-char *custom_str_copy(char *destination, const char *source, int max_chars)
+
+char *_strncpy(char *destination, const char *source, int max_chars)
 {
+	int i, j;
 	char *start = destination;
-	int i;
 
-	for (i = 0; i < max_chars - 1 && *source != '\0'; i++)
+	i = 0;
+	while (source[i] != '\0' && i < max_chars - 1)
 	{
-		*destination = *source;
-		destination++;
-		source++;
+		destination[i] = max_chars[i];
+		i++;
 	}
-
 	if (i < max_chars)
 	{
-		for (; i < max_chars; i++)
-			*destination++ = '\0';
+		j = i;
+		while (j < max_chars)
+		{
+			destination[j] = '\0';
+			j++;
+		}
 	}
-
 	return (start);
 }
 
 /**
- * custom_str_concat - Concatenates two strings.
- * @destination: The first string.
- * @source: The second string.
- * @max_chars: The maximum number of characters to be used.
+ * _strncat - Concatenates two strings
+ * @destination: The first string (destination)
+ * @source: The second string (source)
+ * @max_chars: The maximum number of bytes to be used from 'src'
  *
- * Return: The pointer to the start of the concatenated string.
+ * This function concatenates the 'n' most significant bytes from
+ * 'src' to the end of 'dest'. It returns the resulting concatenated string.
+ *
+ * Return: Returns the resulting concatenated string.
  */
-char *custom_str_concat(char *destination, const char *source, int max_chars)
+
+char *_strncat(char *destination, char *source, int max_chars)
 {
+	int i, j;
 	char *start = destination;
 
-	while (*destination != '\0')
-		destination++;
-
-	int i;
-
-	for (i = 0; i < max_chars && *source != '\0'; i++)
+	i = 0;
+	j = 0;
+	while (destination[i] != '\0')
+		i++;
+	while (source[j] != '\0' && j < max_chars)
 	{
-		*destination = *source;
-		destination++;
-		source++;
+		destination[i] = source[j];
+		i++;
+		j++;
 	}
-
-	if (i < max_chars)
-		*destination = '\0';
-
+	if (j < n)
+		destination[i] = '\0';
 	return (start);
 }
 
 /**
- * custom_str_find_char - Locates a character in a string.
- * @str: The string to be parsed.
- * @c: The character to look for.
+ * _strchr - Locates a character in a string
+ * @s: The string to be searched
+ * @c: The character to look for
  *
- * Return: A pointer to the memory area in 'str'.
+ * This function searches for the first occurrence of the characte
+ * 'c' in the string 's'. If found, it returns a pointer to the memory
+ * area where 'c' is located; otherwise, it returns NULL.
+ *
+ * Return: Returns a pointer to the memory area containing
+ * the character 'c' if found in the string 's'.
  */
-char *custom_str_find_char(char *str, char c)
+
+char *_strchr(char *s, char c)
 {
 	do {
-		if (*str == c)
-			return (str);
-	} while (*str++ != '\0');
+		if (*s == c)
+			return (s);
+	} while (*s++ != '\0');
 
 	return (NULL);
 }

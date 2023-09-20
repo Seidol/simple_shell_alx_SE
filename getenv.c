@@ -1,11 +1,18 @@
 #include "shell.h"
 
 /**
- * get_environ - returns the string array copy of our environ
- * @info: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- * Return: Always 0
+ * get_environ - Retrieves a copy of the string array
+ * containing our environment variables
+ * @info: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
+ *
+ * This function returns a copy of the string array containing
+ * our environment variables. It provides a snapshot of
+ * the system's configuration.
+ *
+ * Return: Always returns 0.
  */
+
 char **get_environ(info_t *info)
 {
 	if (!info->environ || info->env_changed)
@@ -18,20 +25,25 @@ char **get_environ(info_t *info)
 }
 
 /**
- * _unsetenv - Remove an environment variable
- * @info: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- * Return: 1 on delete, 0 otherwise
- * @var: the string env var property
+ * _unsetenv - Removes an environment variable
+ * @info: Pointer to a structure containing potential arguments. This is used
+ * to maintain a consistent function prototype.
+ * @var: The string representing the environment variable to be removed
+ *
+ * This function is responsible for deleting an environment variable.
+ * It takes a pointer to the parameter struct and the name of the environment
+ * variable to be removed. It returns 1 upon successful deletion,
+ * and 0 otherwise.
  */
+
 int _unsetenv(info_t *info, char *var)
 {
 	list_t *node = info->env;
+	size_t i = 0;
 	char *p;
 
-	if (!info->env || !var)
+	if (!node || !var)
 		return (0);
-
 	for (size_t i = 0; node; node = node->next, i++)
 	{
 		p = starts_with(node->str, var);
@@ -46,17 +58,21 @@ int _unsetenv(info_t *info, char *var)
 }
 
 /**
- * _setenv - Initialize a new environment variable,
- *             or modify an existing one
- * @info: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- * @var: the string env var property
- * @value: the string env var value
- * Return: Always 0
+ * _setenv - Initializes a new environment variable or modifies an existing one
+ * @info: Pointer to a structure containing potential arguments.
+ * This is used to maintain a consistent function prototype.
+ * @var: The string representing the environment variable property
+ * @value: The string representing the value of the environment variable
+ *
+ * This function is responsible for creating a new environment
+ * variable or modifying an existing one. It takes a pointer to
+ * the parameter struct, the name of the environment variable,
+ * and its value. It always returns 0.
  */
+
 int _setenv(info_t *info, char *var, char *value)
 {
-	char *buf;
+	char *buf = NULL;
 	list_t *node;
 	char *p;
 
@@ -66,11 +82,10 @@ int _setenv(info_t *info, char *var, char *value)
 	buf = malloc(_strlen(var) + _strlen(value) + 2);
 	if (!buf)
 		return (1);
-
-	_strcpy(buf, var, _strlen(var));
-	_strcat(buf, "=", _strlen("="));
-	_strcat(buf, value, _strlen(value));
-
+	_strcpy(buf, var);
+	_strcat(buf, "=");
+	_strcat(buf, value);
+	node = info->env;
 	for (node = info->env; node; node = node->next)
 	{
 		p = starts_with(node->str, var);

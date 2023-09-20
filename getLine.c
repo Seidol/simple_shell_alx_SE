@@ -1,93 +1,87 @@
 #include "shell.h"
 
 /**
- * getCommandChain - This function reads a line of input,
- * potentially containing
- * chained commands, and stores it in the provided buffer.
+ * input_buf - Buffers chained commands for processing
+ * @shell_info: Pointer to the parameter struct for the shell
+ * @buf: Address of the buffer storing the input
+ * @length: Address of the variable storing the length of the input
  *
- * @shell_info: Parameter struct for shell information
- * @buffer: Address of the buffer to store the input
- * @length: Address of the length variable
+ * This function is responsible for managing and buffering chained
+ * commands for processing. It takes the parameter struct of the
+ * shell, the address of the input buffer, and the address of
+ * the length variable. It returns the number of bytes read.
  *
- * Return: Number of bytes read
+ * Return: Returns the number of bytes read.
  */
-ssize_t getCommandChain(info_t *shell_info, char **buffer, size_t *length)
+
+ssize_t input_buf(info_t *shell_info, char **buf, size_t *length)
 {
 	ssize_t bytesRead = 0;
-	size_t currentLength = 0;
+	size_t len_p = 0;
 
-	/** If there is no remaining data in the buffer, read a new line */
 	if (!*length)
 	{
-		/** Free existing buffer */
-		free(*buffer);
-		*buffer = NULL;
-
-		/** Set up a signal handler for SIGINT (Ctrl+C) */
-		signal(SIGINT, handleSIGINT);
-
-		/** Read a line from standard input */
-		#if USE_GETLINE
-			bytesRead = getline(buffer, &currentLength, stdin);
-		#else
-			bytesRead = customGetLine(shell_info, buffer,
-			&currentLength);
-		#endif
-
-		/** Process the input if read was successful */
+		free(*buf);
+		*buf = NULL;
+		signal(SIGINT, sigintHandler);
+#if USE_GETLINE
+		bytesRead = getline(buf, &len_p, stdin);
+#else
+		bytesRead = _getline(shell_info, buf, &len_p);
+#endif
 		if (bytesRead > 0)
-			/** Remove trailing newline character */
-			if ((*buffer)[bytesRead - 1] == '\n')
-				(*buffer)[bytesRead - 1] = '\0';
+		{
+			if ((*buf)[bytesRead - 1] == '\n')
+			{
+				(*buf)[bytesRead - 1] = '\0';
 				bytesRead--;
-			/** Update shell information */
+			}
 			shell_info->linecount_flag = 1;
-			remove_comments(*buffer);
-			add_history_entry(shell_info, *buffer,
-			shell_info->histcount++);
-
-			/** Update length and command buffer in shell_info */
-			*length = bytesRead;
-			shell_info->cmd_buf = buffer;
+			remove_comments(*buf);
+			build_history_list(shell_info, *buf, shell_info->histcount++);
+			{
+				*length = bytesRead;
+				shell_info->cmd_buf = buf;
+			}
+		}
 	}
-
 	return (bytesRead);
 }
 
 /**
- * processInput - This function processes the input, potentially containing
- * multiple chained commands.
+ * get_input - Retrieves a line of input excluding the newline character
+ * @shell_info: Pointer to the parameter struct
  *
- * @shell_info: Parameter struct for shell information
+ * This function is responsible for obtaining a line of input,
+ * excluding the newline character. It takes the parameter struct
+ * as an argument and returns the number of bytes read.
  *
- * Return: Number of bytes read
+ * Return: Returns the number of bytes read.
  */
-ssize_t processInput(info_t *shell_info)
+
+ssize_t get_input(info_t *shell_info)
 {
-	static char *buffer;
+	static char *buf;
 	static size_t i, j, length;
 	ssize_t bytesRead = 0;
-	char **arg_p = &(shell_info->arg), *p;
+	char **buf_p = &(shell_info->arg), *p;
 
-	/** Flush the buffer */
 	_putchar(BUF_FLUSH);
-
-	/** Read a line, potentially with chained commands */
-	bytesRead = getCommandChain(shell_info, &buffer, &length);
-
-	/** If end of input is reached, return -1 (EOF) */
+	bytesRead = input_buf(shell_info, &buf, &length);
 	if (bytesRead == -1)
 		return (-1);
-
-	/** If there are commands in the buffer */
 	if (length)
 	{
 		j = i;
-		p = buffer + i;
-		getCommandChain(shell_info, &buffer, &j);
-		for (; j < length; j++)
-			if (getCommandChain(shell_info, &buffer, &j))
+		p = buf + i;
+
+		check_chain(shell_info, buf, &j, i, length);
+		while (j < length)
+		{
+			if (is_chain(shell_info, buf, &j))
 				break;
+			j++;
+		}
 
 		i = j + 1;
 		if (i >= length)
@@ -96,94 +90,100 @@ ssize_t processInput(info_t *shell_info)
 			shell_info->cmd_buf_type = CMD_NORM;
 		}
 
-		*arg_p = p; /** Set the current command pointer */
-		return (_strlen(p)); /** Return the length of current command */
+		*buf_p = p;
+		return (_strlen(p));
 	}
 
-	*arg_p = buffer; /** If no chained command, return the buffer */
-	return (bytesRead); /** Return the total bytes read */
-}
-
-/**
- * readBuffer - This function reads data into a buffer.
- *
- * @shell_info: Parameter struct for shell information
- * @buf: Buffer to read data into
- * @i: Size of data
- *
- * Return: Number of bytes read
- */
-ssize_t readBuffer(info_t *shell_info, char *buf, size_t *i)
-{
-	ssize_t bytesRead = 0;
-
-	/** If there's data in the buffer, return 0 (no additional read) */
-	if (*i)
-		return  (0);
-
-	/** Read data from file descriptor into buffer */
-	bytesRead = read(shell_info->readfd, buf, READ_BUF_SIZE);
-
-	/** Update size 'i' with number of bytes read */
-	if (bytesRead >= 0)
-		*i = bytesRead;
-
+	*buf_p = buf;
 	return (bytesRead);
 }
 
 /**
- * customGetLine - This function get the nxt line of input from standard input.
+ * read_buf - Reads data into a buffer
+ * @info: Pointer to the parameter struct
+ * @buf: Buffer to store the read data
+ * @i: Size of the buffer
  *
- * @shell_info: Parameter struct for shell information
- * @ptr: Address of pointer to buffer (preallocated or NULL)
- * @length: Size of preallocated buffer if not NULL
+ * This function reads data into the provided buffer
+ * using the given size parameter. It returns the number of bytes read.
  *
- * Return: Number of bytes read
+ * Return: Returns the number of bytes read.
  */
-int customGetLine(info_t *shell_info, char **ptr, size_t *length)
+
+ssize_t read_buf(info_t *info, char *buf, size_t *i)
+{
+	ssize_t bytesRead = 0;
+
+	if (*i)
+		return (0);
+	bytesRead = read(info->readfd, buf, READ_BUF_SIZE);
+	if (bytesRead >= 0)
+		*i = bytesRead;
+	return (bytesRead);
+}
+
+/**
+ * _getline - Retrieves the next line of input from standard input (STDIN)
+ * @info: Pointer to the parameter struct
+ * @ptr: Address of a pointer to a buffer, which can be preallocated or NULL
+ * @length: Size of the preallocated buffer (if ptr is not NULL)
+ *
+ * This function reads the next line of input from standard input (STDIN)
+ * using the provided parameter struct. If ptr is not NULL, it uses
+ * the preallocated buffer with the specified size.
+ * It returns the resulting string.
+ *
+ * Return: Returns the resulting string.
+ */
+
+int _getline(info_t *info, char **ptr, size_t *length)
 {
 	static char buf[READ_BUF_SIZE];
 	static size_t i, len;
 	size_t k;
-	ssize_t bytesRead = 0;
+	ssize_t bytesRead = 0, s = 0;
 	char *p = NULL, *new_p = NULL, *c;
 
 	p = *ptr;
 	if (p && length)
-		bytesRead = *length;
+		s = *length;
 	if (i == len)
 		i = len = 0;
-	bytesRead = readBuffer(shell_info, buf, &len);
+
+	bytesRead = read_buf(info, buf, &len);
 	if (bytesRead == -1 || (bytesRead == 0 && len == 0))
 		return (-1);
-	c = strchr(buf + i, '\n');
+
+	c = _strchr(buf + i, '\n');
 	k = c ? 1 + (unsigned int)(c - buf) : len;
-	new_p = _realloc(p, bytesRead, bytesRead ? bytesRead + k : k + 1);
-	if (!new_p)
-		return (p ? (free(p), -1) : -1);
-	if (bytesRead)
-		_strcat(new_p, buf + i, k - i);
+	new_p = _realloc(p, s, s ? s + k : k + 1);
+	if (!new_p) /* MALLOC FAILURE! */
+		return (p ? free(p), -1 : -1);
+
+	if (s)
+		_strncat(new_p, buf + i, k - i);
 	else
-		_strcpy(new_p, buf + i, k - i + 1);
-	bytesRead += k - i;
+		_strncpy(new_p, buf + i, k - i + 1);
+
+	s += k - i;
 	i = k;
 	p = new_p;
+
 	if (length)
-		*length = bytesRead;
-	*ptr = p; /** Update buffer pointer */
-	return (bytesRead); /** Return total bytes read */
+		*length = s;
+	*ptr = p;
+	return (s);
 }
 
 /**
- * handleSIGINT - This function handles the SIGINT signal (Ctrl+C).
+ * sigintHandler - This function handles the SIGINT signal (Ctrl+C).
  *
  * @sig_num: The signal number
  *
  * Return: void
  */
-void handleSIGINT(__attribute__((unused)) int sig_num)
+void sigintHandler(__attribute__((unused))int sig_num)
 {
-	/** Print newline and shell prompt */
 	_puts("\n");
 	_puts("$ ");
 	_putchar(BUF_FLUSH);

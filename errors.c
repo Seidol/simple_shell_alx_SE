@@ -1,99 +1,99 @@
 #include "shell.h"
 
 /**
- * custom_puts - Prints a custom string to standard error.
- * @custom_str: The string to be printed.
+ * _eputs - Displays a given input string
+ * @s: The string to be printed
  *
- * This function prints the characters of the custom string to the standard
- * error output.
- * If the input string is NULL, it does nothing.
+ * This function is responsible for printing
+ * the specified string to the output.
+ *
+ * Return: None
  */
-void custom_puts(char *custom_str)
-{
-	int custom_index = 0;
 
-	if (!custom_str)
+void _eputs(char *s)
+{
+	int a = 0;
+
+	if (!s)
 		return;
-
-	do {
-		custom_putchar(custom_str[custom_index]);
-		custom_index++;
-	} while (custom_str[custom_index] != '\0');
+	while (s[a] != '\0')
+	{
+		_eputchar(s[a]);
+		a++;
+	}
 }
 
 /**
- * custom_putchar - Writes a character to standard error.
- * @c: The character to print.
+ * _eputchar - Outputs the character 'c' to the standard error stream (stderr)
+ * @c: The character to be printed
  *
- * This function writes the specified character to the standard error output.
- * If the character is a special value for flushing the buffer or the buffer
- * is full,
- * it flushes the buffer to the standard error output.
- * Return: return one when it is sucessful
+ * This function writes the specified character to
+ * the standard error output.
+ *
+ * Return: Returns 1 on successful execution. On error,
+ * it returns -1, and sets the 'errno' appropriately.
  */
-int custom_putchar(char c)
-{
-	static int i;
-	static char buffer[WRITE_BUF_SIZE];
 
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+int _eputchar(char b)
+{
+	static int a;
+	static char buf[WRITE_BUF_SIZE];
+
+	if (b == BUF_FLUSH || a >= WRITE_BUF_SIZE)
 	{
-		write(2, buffer, i);
+		write(2, buf, a);
+		i = 0;
+	}
+	if (b != BUF_FLUSH)
+		buf[a++] = b;
+	return (1);
+}
+
+/**
+ * _putfd - Writes the character 'c' to the specified file descriptor 'fd'
+ * @c: The character to be printed
+ * @fd: The file descriptor to write to
+ *
+ * This function sends the specified character to the specified file descriptor
+ *
+ * Return: Returns 1 on successful execution. On error, 
+ * it returns -1 and sets 'errno' appropriately.
+ */
+
+int _putfd(char c, int fd)
+{
+	static int a;
+	static char buf[WRITE_BUF_SIZE];
+
+	if (c == BUF_FLUSH || a >= WRITE_BUF_SIZE)
+	{
+		write(fd, buf, a);
 		i = 0;
 	}
 	if (c != BUF_FLUSH)
-		buffer[i++] = c;
-		return (1);
+		buf[i++] = c;
+	return (1);
 }
 
 /**
- * custom_putfd - Writes a character to a given file descriptor.
- * @c: The character to print.
- * @fd: The file descriptor to write to.
+ * _putsfd - Outputs the specified string to the given file descriptor
+ * @s: The string to be printed
+ * @fd: The file descriptor to write to
  *
- * This function writes the specified character to the given file descriptor.
- * If the character is a special value for flushing the buffer or the buffer
- * is full,
- * it flushes the buffer to the specified file descriptor.
- * Return: return one when it sucessful
- */
-int custom_putfd(char c, int fd)
-{
-	static int i;
-	static char buffer[WRITE_BUF_SIZE];
-
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
-	{
-		write(fd, buffer, i);
-		i = 0;
-	}
-	if (c != BUF_FLUSH)
-		buffer[i++] = c;
-		return (1);
-}
-
-/**
- * custom_putsfd - Prints a custom string to a given file descriptor.
- * @custom_str: The string to be printed.
- * @fd: The file descriptor to write to.
+ * This function sends the provided string to the specified file descriptor.
  *
- * This function prints the characters of the custom string to the
- * specified file descriptor.
- * If the input string is NULL, it does nothing.
- * Return: return one it is sucessful
+ * Return: Returns the number of characters successfully written.
  */
-int custom_putsfd(char *custom_str, int fd)
+
+int _putsfd(char *s, int fd)
 {
-	int custom_index = 0;
 	int chars_written = 0;
 
-	if (!custom_str)
+	if (!s)
 		return (0);
-
-	do {
-		chars_written += custom_putfd(custom_str[custom_index], fd);
-		custom_index++;
-	} while (custom_str[custom_index] != '\0');
-
+	while (*s)
+	{
+		chars_written += _putfd(*s++, fd);
+	}
 	return (chars_written);
 }
