@@ -13,7 +13,7 @@
  * Return: Returns the resulting concatenated string.
  */
 
-char *_strncpy(char *destination, const char *source, int max_chars)
+char *_strncpy(char *destination, char *source, int max_chars)
 {
 	int i, j;
 	char *start = destination;
@@ -21,7 +21,7 @@ char *_strncpy(char *destination, const char *source, int max_chars)
 	i = 0;
 	while (source[i] != '\0' && i < max_chars - 1)
 	{
-		destination[i] = max_chars[i];
+		destination[i] = source[i];
 		i++;
 	}
 	if (i < max_chars)
@@ -63,7 +63,7 @@ char *_strncat(char *destination, char *source, int max_chars)
 		i++;
 		j++;
 	}
-	if (j < n)
+	if (j < max_chars)
 		destination[i] = '\0';
 	return (start);
 }

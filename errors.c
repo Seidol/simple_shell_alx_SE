@@ -42,7 +42,7 @@ int _eputchar(char b)
 	if (b == BUF_FLUSH || a >= WRITE_BUF_SIZE)
 	{
 		write(2, buf, a);
-		i = 0;
+		a = 0;
 	}
 	if (b != BUF_FLUSH)
 		buf[a++] = b;
@@ -68,10 +68,10 @@ int _putfd(char c, int fd)
 	if (c == BUF_FLUSH || a >= WRITE_BUF_SIZE)
 	{
 		write(fd, buf, a);
-		i = 0;
+		a = 0;
 	}
 	if (c != BUF_FLUSH)
-		buf[i++] = c;
+		buf[a++] = c;
 	return (1);
 }
 

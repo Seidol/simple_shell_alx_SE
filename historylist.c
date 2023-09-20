@@ -31,7 +31,7 @@ int unset_alias(info_t *i, char *s)
 	originalChar = *equalSign;
 	*equalSign = 0;
 	result = delete_node_at_index(&(i->alias),
-		get_node_index(i->alias, node_starts_with(i->alias, str, -1)));
+		get_node_index(i->alias, node_starts_with(i->alias, s, -1)));
 	*equalSign = originalChar;
 	return (result);
 }

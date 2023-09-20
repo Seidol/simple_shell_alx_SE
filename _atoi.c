@@ -63,7 +63,7 @@ int _atoi(char *string)
 		{
 			f = 1;
 			r *= 10;
-			r += (s[a] - '0');
+			r += (string[a] - '0');
 		}
 		else if (f == 1)
 			f = 2;

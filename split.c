@@ -13,7 +13,7 @@
 
 char **strtow(char *str, char *d)
 {
-	int a, b, c, d, nwords = 0;
+	int a, b, c, u, nwords = 0;
 	char **s;
 
 	if (str == NULL || str[0] == 0)
@@ -44,9 +44,9 @@ char **strtow(char *str, char *d)
 			free(s);
 			return (NULL);
 		}
-		for (d = 0; d < c; d++)
-			s[b][d] = str[a++];
-		s[b][d] = 0;
+		for (d = 0; u < c; u++)
+			s[b][u] = str[a++];
+		s[b][u] = 0;
 	}
 	s[b] = NULL;
 	return (s);
