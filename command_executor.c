@@ -40,21 +40,14 @@ int is_cmd(info_t *info, char *path)
 
 char *dup_chars(char *pathstr, int start, int stop)
 {
-	char *buf = malloc(stop - start + 1);
-	if (buf == NULL)
-	{
-		perror("Memory allocation failed");
-		exit(EXIT_FAILURE);
-	}
+	static char buf[1024];
+	int a = 0, b = 0;
 
-	int a, b;
-
-	for (b = 0, a = start; a < stop; a++)
+	for (b = 0, a = start; b < stop; a++)
 		if (pathstr[a] != ':')
 			buf[b++] = pathstr[a];
-	buf[b] = '\0';
-
-	return buf;
+	buf[b] = 0;
+	return (buf);
 }
 
 /**
