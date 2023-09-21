@@ -45,7 +45,7 @@ int _unsetenv(info_t *info, char *var)
 
 	if (!node || !var)
 		return (0);
-	for (size_t i = 0; node; node = node->next, i++)
+	for (i = 0; node; node = node->next, i++)
 	{
 		p = starts_with(node->str, var);
 		if (p && *p == '=')

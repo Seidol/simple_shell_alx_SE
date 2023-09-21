@@ -122,7 +122,7 @@ char *convert_number(long int nu, int b, int f)
 	char *ptr;
 	unsigned long n = nu;
 
-	if (!(f & CONVERT_UNSIGNED) && n < 0)
+	if (!(f & CONVERT_UNSIGNED))
 	{
 		n = -nu;
 		sn = '-';
