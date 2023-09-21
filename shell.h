@@ -87,9 +87,6 @@ typedef struct passinfo
 	int argc;
 	unsigned int line_count;
 	int err_num;
-	char **environ;
-	int env_changed;
-	int status;
 	int linecount_flag;
 	char *fname;
 	list_t *env;
@@ -138,9 +135,9 @@ char *find_path(info_t *, char *, char *);
 int loophsh(char **);
 
 void _eputs(char *);
+int _putsfd(char *str, int fd);
 int _eputchar(char);
 int _putfd(char c, int fd);
-int _putsfd(char *str, int fd);
 
 int _strlen(char *);
 int _strcmp(char *, char *);
