@@ -13,7 +13,7 @@
 
 char **strtow(char *str, char *d)
 {
-	int a, b, c, u, nwords = 0;
+	int a, b, c, u = 0, nwords = 0;
 	char **s;
 
 	if (str == NULL || str[0] == 0)
@@ -39,18 +39,19 @@ char **strtow(char *str, char *d)
 		s[b] = malloc((c + 1) * sizeof(char));
 		if (!s[b])
 		{
-			for (c = 0; c < b; c++)
-				free(s[c]);
+			for (u = 0; u < b; u++)
+				free(s[u]);
 			free(s);
 			return (NULL);
 		}
-		for (d = 0; u < c; u++)
+		for (u = 0; u < c; u++)
 			s[b][u] = str[a++];
 		s[b][u] = 0;
 	}
 	s[b] = NULL;
 	return (s);
 }
+
 /**
  * strtow2 - Splits a string into words using a specified delimiter.
  * @str: The input string to be split.
@@ -61,7 +62,7 @@ char **strtow(char *str, char *d)
 
 char **strtow2(char *str, char d)
 {
-	int i, j, k, m, numwords = 0;
+	int i, j, k, m = 0, numwords = 0;
 	char **s;
 
 	if (str == NULL || str[0] == 0)
@@ -85,8 +86,8 @@ char **strtow2(char *str, char d)
 		s[j] = malloc((k + 1) * sizeof(char));
 		if (!s[j])
 		{
-			for (k = 0; k < j; k++)
-				free(s[k]);
+			for (m = 0; m < j; m++)
+				free(s[m]);
 			free(s);
 			return (NULL);
 		}
