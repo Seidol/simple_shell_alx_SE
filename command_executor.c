@@ -40,14 +40,19 @@ int is_cmd(info_t *info, char *path)
 
 char *dup_chars(char *pathstr, int start, int stop)
 {
-	static char buf[1024];
-	int a = 0, b = 0;
+	char *buf = malloc((stop - start + 1) * sizeof(char));
 
+	if (buf == NULL)
+	{
+		perror("malloc");
+		exit(EXIT_FAILURE);
+	}
+	int a, b;
 	for (b = 0, a = start; b < stop && pathstr[a] != '\0'; a++)
 		if (pathstr[a] != ':')
 			buf[b++] = pathstr[a];
-	buf[b] = 0;
-	return (buf);
+			buf[b] = '\0';
+	return buf;
 }
 
 /**
