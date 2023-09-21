@@ -5,12 +5,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
 #include <limits.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
 
 #define READ_BUF_SIZE 1024
 #define WRITE_BUF_SIZE 1024
@@ -87,6 +87,9 @@ typedef struct passinfo
 	int argc;
 	unsigned int line_count;
 	int err_num;
+	char **environ;
+	int env_changed;
+	int status;
 	int linecount_flag;
 	char *fname;
 	list_t *env;

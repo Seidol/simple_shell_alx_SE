@@ -2,7 +2,7 @@
 
 .SH NAME
 .B simple_shell
-- Simple shell create in C to interact with a linux operating system.
+- Simple shell in C to interact with a linux operating system.
 
 .SH SYNOPSIS
  hsh [options] [file]
